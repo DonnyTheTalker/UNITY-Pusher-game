@@ -4,7 +4,8 @@ using UnityEngine;
 
 public class SoundManager : MonoBehaviour
 { 
-    public AudioSource MusicSource; 
+    public AudioSource MusicSource;
+    public AudioSource EffectSouce;
 
     public static SoundManager Instance = null; 
 
@@ -24,6 +25,12 @@ public class SoundManager : MonoBehaviour
         MusicSource.Play();
     }
 
+    public void StartEffect(AudioClip effect)
+    {
+        EffectSouce.clip = effect;
+        EffectSouce.Play();
+    }
+
     public void StopSong()
     {
         StartCoroutine(StopSongCO());
@@ -32,13 +39,15 @@ public class SoundManager : MonoBehaviour
     private IEnumerator StopSongCO()
     {
         float volumeOffset = MusicSource.volume / 10f;
+        float volume = MusicSource.volume;
 
         for (int i = 0; i < 10; i++) {
             MusicSource.volume -= volumeOffset;
-            yield return new WaitForSeconds(0.03f);
+            yield return new WaitForSeconds(0.05f);
         }
 
-        MusicSource.Stop();  
+        MusicSource.Stop();
+        MusicSource.volume = volume;
     }
 
 }
