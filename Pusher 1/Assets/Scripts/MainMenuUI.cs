@@ -10,12 +10,13 @@ public class MainMenuUI : MonoBehaviour
 
     public void Push()
     {
+        SoundManager.Instance.StopSong();
         _sceneFader.FadeTo(MainLevelScene);
     }
 
     public void Start()
     {
-        Invoke("ChangeMainSong", 0.6f);
+        Invoke("ChangeMainSong", 0.3f);
     }
 
     public void ChangeMainSong()

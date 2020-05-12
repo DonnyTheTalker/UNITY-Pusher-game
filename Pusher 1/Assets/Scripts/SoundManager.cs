@@ -35,7 +35,7 @@ public class SoundManager : MonoBehaviour
 
         for (int i = 0; i < 10; i++) {
             MusicSource.volume -= volumeOffset;
-            yield return null;
+            yield return new WaitForSeconds(0.03f);
         }
 
         MusicSource.Stop();  
