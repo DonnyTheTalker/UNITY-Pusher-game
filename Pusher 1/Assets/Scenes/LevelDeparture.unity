@@ -250,6 +250,7 @@ MonoBehaviour:
   - 7
   NarrativeMessagesAudio: []
   _sceneFader: {fileID: 1149693308}
+  _playerMoney: {fileID: 11400000, guid: fced0beaf53b5f04e891b125bfb0b0af, type: 2}
   LevelHubScene: LevelHub
 --- !u!4 &446695622
 Transform:

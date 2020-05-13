@@ -23,6 +23,10 @@ public class Level1 : MonoBehaviour
     private int _currectSubject;
     private bool _canSwipe;
     private float _flipCountdown = 1f;
+    private float _moneyChangeCountdown = 2f;
+
+    public string[] Congratulations;
+    public string[] Regrets;
 
     void Start()
     {
@@ -37,14 +41,24 @@ public class Level1 : MonoBehaviour
         temp.a = 0f;
         TextInPanel.color = temp;
 
-        ChangeMoneyText();
-        //SoundManager.Instance.StartSong(LevelSong);
+        ChangeMoneyText("");
+
+        SoundManager soundManager = SoundManager.Instance;
+
+        if (soundManager != null)
+            soundManager.StartSong(LevelSong);
         Setup();
     }
 
     void Update()
     {
         _flipCountdown -= Time.deltaTime;
+        _moneyChangeCountdown -= Time.deltaTime;
+
+        if (_moneyChangeCountdown <= 0f) {
+            _moneyChangeCountdown = 2f;
+            ChangeMoneyText();
+        }
 
         if (_flipCountdown <= 0f) {
             _flipCountdown = 1f;
@@ -67,33 +81,83 @@ public class Level1 : MonoBehaviour
         StartCoroutine(ChangeGameState());
     }
 
-    IEnumerator ChangeGameState()
+    IEnumerator ChangeGameState(bool extraSpeed = false)
     {
-        StartCoroutine(FadePanelIn());
-        yield return new WaitForSeconds(2f);
+        StartCoroutine(FadePanelIn(extraSpeed));
 
-        _subjectSprite.sprite = SubjectSprites[0];
+        if (extraSpeed)
+            yield return new WaitForSeconds(1f);
+        else
+            yield return new WaitForSeconds(2f);
+
+        _subjectSprite.sprite = SubjectSprites[_currectSubject];
         yield return new WaitForSeconds(1f);
 
-        StartCoroutine(FadePanelOut());
-        yield return new WaitForSeconds(2f);
+
+        StartCoroutine(FadePanelOut(extraSpeed));
+        if (extraSpeed)
+            yield return new WaitForSeconds(1f);
+        else
+            yield return new WaitForSeconds(2f);
+
         _canSwipe = true;
         _flipCountdown = 1f;
     }
 
     public void Violence()
     {
+        if (!_canSwipe) return;
+        _canSwipe = false;
+
+        if (SubjectViolent[_currectSubject]) {
+            NextStage(true);
+        } else {
+            NextStage(false);
+        }
+
         Debug.Log("Left");
     }
 
     public void Diplomacy()
     {
+        if (!_canSwipe) return;
+        _canSwipe = false;
+        
+        if (SubjectDiplomacy[_currectSubject]) {
+            NextStage(true);
+        } else {
+            NextStage(false);
+        }
+
         Debug.Log("Right");
     }
 
-    private void ChangeMoneyText()
+    private void NextStage(bool moneyEarned)
     {
-        MoneyText.text = PlayerMoney.Value.ToString();
+
+        if (moneyEarned) {
+
+            PlayerMoney.Value += 2000;
+            ChangeMoneyText("  + 2000");
+            TextInPanel.text = Congratulations[Random.Range(0, Congratulations.Length)];
+            _moneyChangeCountdown = 2f;
+        } else {
+            ChangeMoneyText();
+            TextInPanel.text = Regrets[Random.Range(0, Congratulations.Length)];
+        }
+
+        if (_currectSubject == SubjectSprites.Length - 1) {
+
+        } else {
+            _currectSubject++;
+            StartCoroutine(ChangeGameState(true));
+        }
+
+    }
+
+    private void ChangeMoneyText(string addText = "")
+    {
+        MoneyText.text = PlayerMoney.Value.ToString() + addText;
     }
 
     private IEnumerator FadePanelIn(bool extraSpeed = false)
@@ -141,16 +205,16 @@ public class Level1 : MonoBehaviour
         for (int i = 0; i < SubjectSprites.Length; i++) {
 
             var tempSprite = SubjectSprites[i];
- //           var tempV = SubjectViolent[i];
-   //         var tempD = SubjectDiplomacy[i];
+            var tempV = SubjectViolent[i];
+            var tempD = SubjectDiplomacy[i];
 
             int pos = Random.Range(0, i + 1);
 
-     //       SubjectDiplomacy[i] = SubjectDiplomacy[pos];
-       //     SubjectViolent[i] = SubjectViolent[pos];
+            SubjectDiplomacy[i] = SubjectDiplomacy[pos];
+            SubjectViolent[i] = SubjectViolent[pos];
             SubjectSprites[i] = SubjectSprites[pos];
-         //   SubjectDiplomacy[pos] = tempD;
-           // SubjectViolent[pos] = tempV;
+            SubjectDiplomacy[pos] = tempD;
+            SubjectViolent[pos] = tempV;
             SubjectSprites[pos] = tempSprite;
 
         }

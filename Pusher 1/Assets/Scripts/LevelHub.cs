@@ -38,8 +38,4 @@ public class LevelHub : MonoBehaviour
         _currectLevel.Value++;
         _sceneFader.FadeTo(_scenes[_currectLevel.Value - 1]);
     }
-
-
-
-
 }

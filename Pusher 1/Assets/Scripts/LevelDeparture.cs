@@ -19,15 +19,18 @@ public class LevelDeparture : MonoBehaviour
     public AudioClip[] NarrativeMessagesAudio;
 
     [SerializeField] private SceneFader _sceneFader;
+    [SerializeField] private Stat _playerMoney;
+
 
     public string LevelHubScene;
 
     private void Start()
     {
         _textCanvasGroup = NarrativeText.GetComponent<CanvasGroup>();
-        _textCanvasGroup.alpha = 0f; 
-        Invoke("StartNarrative", 5.05f);
-        //Invoke("StartNarrative", 75f);
+        _textCanvasGroup.alpha = 0f;
+        _playerMoney.Value = 0;
+        //Invoke("StartNarrative", 5.05f);
+        Invoke("StartNarrative", 70f);
     }
 
     private void StartNarrative()
